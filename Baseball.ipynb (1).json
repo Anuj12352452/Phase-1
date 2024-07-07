@@ -1,0 +1,714 @@
+{
+  "metadata": {
+    "kernelspec": {
+      "name": "python",
+      "display_name": "Python (Pyodide)",
+      "language": "python"
+    },
+    "language_info": {
+      "codemirror_mode": {
+        "name": "python",
+        "version": 3
+      },
+      "file_extension": ".py",
+      "mimetype": "text/x-python",
+      "name": "python",
+      "nbconvert_exporter": "python",
+      "pygments_lexer": "ipython3",
+      "version": "3.8"
+    }
+  },
+  "nbformat_minor": 4,
+  "nbformat": 4,
+  "cells": [
+    {
+      "cell_type": "code",
+      "source": "import pandas as pd # for data wrangling purpose\nimport numpy as np # Basic computation library\nimport seaborn as sns # For Visualization \nimport matplotlib.pyplot as plt # ploting package\n%matplotlib inline\nimport warnings # Filtering warnings\nwarnings.filterwarnings('ignore')",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "bb=pd.read_csv('baseball.csv')",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "print('No of Rows:',bb.shape[0])\nprint('No of Columns:',bb.shape[1])\nbb.head()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "bb.columns",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "bb.rename(columns={'W' : 'Wins', \n                   'R' : 'Runs Scored', \n                  'AB' : 'At Bat', \n                   'H' : 'Hits', \n                  '2B' : 'Doubles', \n                  '3B' : 'Triples',\n                  'HR' : 'Home Runs', \n                  'BB' : 'Base on Balls', \n                  'SO' : 'Strike Outs', \n                  'SB' : 'Stolen Base',\n                  'RA' : 'Runs Average', \n                  'ER' : 'Earned Runs', \n                 'ERA' : 'Earned Run Average', \n                  'CG' : 'Complete Game',\n                 'SHO' : 'Shut Outs', \n                  'SV' : 'Saves', \n                   'E' : 'Errors'}, \n          inplace=True)\n\nbb.head()",
+      "metadata": {
+        "trusted": true,
+        "tags": [],
+        "editable": true,
+        "slideshow": {
+          "slide_type": ""
+        }
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "bb.info()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "# Visualizing the statistics of the columns using heatmap.\nplt.figure(figsize=(20,8))\nsns.heatmap(bb.describe(),linewidths = 0.1,fmt='0.1f',annot = True)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "plt.figure(figsize=(8,7))\nsns.heatmap(bb.isnull())",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "bb.describe().T",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "plt.figure(figsize=(8,7))\nsns.heatmap(bb.isnull())",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "missing_values = bb.isnull().sum().sort_values(ascending = False)\npercentage_missing_values =(missing_values/len(bb))*100\nprint(pd.concat([missing_values, percentage_missing_values], axis =1, keys =['Missing Values', '% Missing data']))",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "plt.figure(figsize=(20,25), facecolor='white')\nplotnumber =1\nfor column in bb:\n    if plotnumber <=17:\n        ax = plt.subplot(6,3,plotnumber)\n        sns.distplot(bb[column], color='r',hist=False,kde_kws={\"shade\": True})\n        plt.xlabel(column,fontsize=20)\n    plotnumber+=1\nplt.show()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "sns.set_palette('gist_rainbow_r')\nplt.figure(figsize=(20,30), facecolor='white')\nplotnumber =1\nfor column in bb:\n    if plotnumber <=17:\n        ax = plt.subplot(6,3,plotnumber)\n        sns.violinplot(bb[column])\n        plt.xlabel(column,fontsize=20)\n    plotnumber+=1\nplt.show()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "# Checking the relation between two variables\nsns.set_palette('Set1')\nplt.figure(figsize=[10,6])\nplt.title('Comparison between Runs and Hits',fontsize =20)\nsns.scatterplot(bb['Runs Scored'],bb['Hits'],hue=bb['Wins'])\nplt.xlabel('Runs',fontsize =16)\nplt.ylabel(\"Hits\",fontsize =16)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "# Checking the relation between two variables\nsns.set_palette('Set1')\nplt.figure(figsize=[10,6])\nplt.title('Runs Scored Vs Home Runs',fontsize =20)\nsns.scatterplot(bb['Runs Scored'],bb['Home Runs'],hue=bb['Wins'])\nplt.xlabel('Runs Scored',fontsize =16)\nplt.ylabel('Home Runs',fontsize =16)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "# Checking the relation between two variables\nsns.set_palette('Set1')\nplt.figure(figsize=[10,6])\nplt.title('Comparison between Runs and At Bat', fontsize =20)\nsns.scatterplot(bb['Runs Scored'],bb['At Bat'],hue=bb['Wins'])\nplt.xlabel('Runs Scored',fontsize =16)\nplt.ylabel(\"At Bat\",fontsize =16)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "# Checking the relation between two variables\nsns.set_palette('Set1')\nplt.figure(figsize=[10,6])\nplt.title('Runs Scored Vs Strike Outs',fontsize =20)\nsns.scatterplot(bb['Runs Scored'],bb['Strike Outs'],hue=bb['Wins'])\nplt.xlabel('Runs Scored',fontsize =16)\nplt.ylabel('Strike Outs',fontsize =16)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "# Checking the relation between two variables\nsns.set_palette('hsv')\nplt.figure(figsize=[10,6])\nplt.title('Errors Vs Earned Run Average',fontsize =20)\nsns.scatterplot(bb['Errors'],bb['Earned Run Average'],hue=bb['Wins'], cmap=('Spectral'))\nplt.xlabel('Errors',fontsize =16)\nplt.ylabel('Earned Run Average',fontsize =16)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "# Checking the relation between two variables\nsns.set_palette('hsv')\nplt.figure(figsize=[10,6])\nplt.title('At Bat Vs Base on Balls',fontsize =20)\nsns.scatterplot(bb['At Bat'],bb['Earned Run Average'],hue=bb['Errors'], cmap=('Spectral'))\nplt.xlabel('At Bat',fontsize =16)\nplt.ylabel('Earned Run Average',fontsize =16)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "plt.figure(figsize=(18,15), facecolor='white')\nplotnumber =1\nfor column in bb:\n    if plotnumber <=18:\n        ax = plt.subplot(6,3,plotnumber)\n        sns.boxplot(bb[column], palette='hsv')\n        plt.xlabel(column,fontsize=20)\n    plotnumber+=1\nplt.tight_layout()\nplt.show()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "plt.figure(figsize=(18,12))\nsns.barplot(x=\"Wins\", y=\"Base on Balls\", data=bb,palette='PiYG')\nplt.show()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "plt.figure(figsize=(18,12))\nsns.barplot(x=\"Wins\", y=\"Runs Scored\", data=bb,palette='PiYG')\nplt.show()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "plt.figure(figsize=(18,12))\nsns.barplot(x=\"Wins\", y=\"Runs Average\", data=bb,palette='gist_earth')\nplt.title('Bar plot of Wins Vs Run Average', fontsize =20)\nplt.show()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "plt.figure(figsize=(18,12))\nsns.barplot(x=\"Wins\", y=\"Earned Run Average\", data=bb,palette='spring')\nplt.xlabel('Wins',fontsize =16)\nplt.ylabel('Earned Run Average',fontsize =16)\nplt.show()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "# Checking the relation between two variables\nsns.set_palette('Set1')\nplt.figure(figsize=[16,8])\nplt.title('Comparison between Run Average and Earned Run Average', fontsize =20)\nsns.stripplot(bb['Runs Average'],bb['Earned Run Average'],hue=bb['Wins'])\nplt.xlabel('Runs Average',fontsize =16)\nplt.ylabel(\"Earned Run Average\",fontsize =16)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "# Checking the relation between two variables\nsns.set_palette('Set1')\nplt.figure(figsize=[16,8])\nplt.title('Comparison between Run Average and Earned Run Average', fontsize =20)\nsns.stripplot(bb['Runs Average'],bb['Strike Outs'],hue=bb['Wins'])\nplt.xlabel('Runs Average',fontsize =16)\nplt.ylabel(\"Strike Outs\",fontsize =16)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "bb['Runs Scored'].max()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "bb.loc[bb['Runs Scored']==891]",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "bb['Home Runs'].max(),bb['Base on Balls'].max(),bb['Doubles'].max()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "sns.jointplot(x=\"Earned Runs\", y=\"Wins\", data=bb, color=\"blue\",palette=\"Set1\")",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "plt.figure(figsize=(10,10))\nsns.jointplot(x=\"Saves\", y=\"Wins\", data=bb, color=\"purple\")",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "sns.pairplot(bb, hue=\"Wins\")",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "plt.figure(figsize=(17,12))\nsns.heatmap(bb.corr(), vmin=-1, vmax=1, annot=True, square=True, fmt='0.3f', \n            annot_kws={'size':10}, cmap=\"gist_stern\", mask=upper_triangle)\nplt.xticks(fontsize=12)\nplt.yticks(fontsize=12)\nplt.show()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "from scipy.stats import zscore\nz = np.abs(zscore(bb))\nthreshold = 3\nbb1 = bb[(z<3).all(axis = 1)]",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "print(\"\\033[1m\"+'Shape of dataset after removing outliers :'+\"\\033[0m\",bb1.shape)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "print(\"\\033[1m\"+'Percentage Data Loss :'+\"\\033[0m\",((30-29)/30)*100,'%')",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "bb1.skew()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "from scipy.stats import boxcox",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "bb1['Hits']=boxcox(bb1['Hits'],-2)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "bb1['Shut Outs']=boxcox(bb1['Shut Outs'],0.5)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "bb1['Saves']=boxcox(bb1['Saves'],0.5)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "from sklearn.preprocessing import PowerTransformer\nfrom sklearn.compose import ColumnTransformer",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": 1
+    },
+    {
+      "cell_type": "code",
+      "source": "EC=['Errors','Complete Game']\nds =bb1[EC].copy()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "column_trans =ColumnTransformer(\n    [  ('Errors',PowerTransformer(method='yeo-johnson',standardize=True),['Errors']),\n      ('Complete Game',PowerTransformer(method='yeo-johnson',standardize=True),['Complete Game'])])\ntransformed_yeojohnson =column_trans.fit_transform(bb1)   \nnew_cols=['Errors','Complete Game']\ndataset=pd.DataFrame(transformed_yeojohnson,columns=new_cols) #to convert numpy array back into dataframe\npd.concat([dataset],axis=1)\ndataset.head()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "# reseting index and mergeing transform data\nbb1.reset_index(drop=True, inplace=True)\ndataset.index=bb1.index\nbb1[EC]=dataset[EC]",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "bb1.skew()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "bb1.corr()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "upper_triangle = np.triu(bb.corr())\nplt.figure(figsize=(20,15))\nsns.heatmap(bb1.corr(), vmin=-1, vmax=1, annot=True, square=True, fmt='0.3f', \n            annot_kws={'size':10}, cmap=\"gist_stern\", mask=upper_triangle)\nplt.xticks(fontsize=12)\nplt.yticks(fontsize=12)\nplt.show()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "plt.figure(figsize = (18,6))\nbb1.corr()['Wins'].drop(['Wins']).plot(kind='bar',color = 'c')\nplt.xlabel('Features',fontsize=15)\nplt.ylabel('Wins',fontsize=15)\nplt.title('Correlation of features with Target Variable win',fontsize = 18)\nplt.show()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "from statsmodels.stats.outliers_influence import variance_inflation_factor\nvif= pd.DataFrame()\nvif['VIF']= [variance_inflation_factor(bb2.values,i) for i in range(bb1.shape[1])]\nvif['Features']= bb1.columns\nvif",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "X=bb1.drop(columns =['Wins'])\nY=bb1['Wins']",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "from sklearn.preprocessing import StandardScaler\nscaler= StandardScaler()\nX_scale = scaler.fit_transform(X)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "from sklearn.decomposition import PCA\npca = PCA()\n#plot the graph to find the principal components\nx_pca = pca.fit_transform(X_scale)\nplt.figure(figsize=(10,10))\nplt.plot(np.cumsum(pca.explained_variance_ratio_), 'ro-')\nplt.xlabel('Number of Components')\nplt.ylabel('Variance %')\nplt.title('Explained variance Ratio')\nplt.grid()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "pca_new = PCA(n_components=7)\nx_new = pca_new.fit_transform(X_scale)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "principle_x=pd.DataFrame(x_new,columns=np.arange(7))",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "from statsmodels.stats.outliers_influence import variance_inflation_factor\nvif= pd.DataFrame()\nvif['VIF']= [variance_inflation_factor(principle_x.values,i) for i in range(principle_x.shape[1])]\nvif['Features']= principle_x.columns\nvif",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "from sklearn.linear_model import LinearRegression\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.ensemble import RandomForestRegressor\nfrom sklearn.tree import DecisionTreeRegressor\nfrom sklearn.svm import SVR\nfrom sklearn.ensemble import AdaBoostRegressor\nfrom sklearn.ensemble import  GradientBoostingRegressor\nfrom sklearn.neighbors import KNeighborsRegressor\nfrom sklearn.metrics import mean_squared_error, mean_absolute_error\nfrom sklearn.metrics import r2_score\nfrom sklearn.model_selection import train_test_split",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "X_train, X_test, Y_train, Y_test = train_test_split(principle_x, Y, random_state=42, test_size=.3)\nprint('Training feature matrix size:',X_train.shape)\nprint('Training target vector size:',Y_train.shape)\nprint('Test feature matrix size:',X_test.shape)\nprint('Test target vector size:',Y_test.shape)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "from sklearn.linear_model import LinearRegression\nfrom sklearn.metrics import r2_score\nmaxR2_score=0\nmaxRS=0\nfor i in range(1,250):\n    X_train, X_test, Y_train, Y_test = train_test_split(principle_x, Y, random_state=i, test_size=.25)\n    lin_reg=LinearRegression()\n    lin_reg.fit(X_train,Y_train)\n    y_pred=lin_reg.predict(X_test)\n    R2=r2_score(Y_test,y_pred)\n    if R2>maxR2_score:\n        maxR2_score=R2\n        maxRS=i\nprint('Best R2 Score is', maxR2_score ,'on Random_state', maxRS)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "X_train, X_test, Y_train, Y_test = train_test_split(principle_x, Y, random_state=217, test_size=.25)\nlin_reg=LinearRegression()\nlin_reg.fit(X_train,Y_train)\nlin_reg.score(X_train,Y_train)\ny_pred=lin_reg.predict(X_test)\nprint('\\033[1m'+'Predicted Wins:'+'\\033[0m\\n',y_pred)\nprint('\\n')\nprint('\\033[1m'+'Actual Wins:'+'\\033[0m\\n',Y_test)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "print('\\033[1m'+' Error :'+'\\033[0m')\nprint('Mean absolute error :', mean_absolute_error(Y_test,y_pred))\nprint('Mean squared error :', mean_squared_error(Y_test,y_pred))\nprint('Root Mean Squared Error:', np.sqrt(mean_squared_error(Y_test,y_pred)))\nprint('\\n')\nfrom sklearn.metrics import r2_score\nprint('\\033[1m'+' R2 Score :'+'\\033[0m')\nprint(r2_score(Y_test,y_pred,multioutput='variance_weighted'))",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "# Cross Validation\nscore = cross_val_score(lin_reg, principle_x, Y, cv =3)\nprint('\\033[1m'+'Cross Validation Score :',lin_reg,\":\"+'\\033[0m\\n')\nprint(\"Mean CV Score :\",score.mean())",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "plt.figure(figsize=(6,5))\ny_pred=lin_reg.predict(X_test)\nsns.swarmplot(Y_test.round(2), y_pred)\nprint('\\033[1m'+' True Values Vs Predicted Value plot :' +'\\033[0m')\nplt.xlabel('True Values' , fontsize=15)\nplt.ylabel('Predictions', fontsize=15)\nplt.tight_layout()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "from sklearn.neighbors import KNeighborsRegressor\nfrom sklearn import neighbors\nfrom math import sqrt\nfrom sklearn.metrics import mean_squared_error\nrmse_val = [] #to store rmse values for different k\nfor K in range(10):\n    K = K+1\n    model = neighbors.KNeighborsRegressor(n_neighbors = K)\n\n    model.fit(X_train,Y_train)  #fit the model\n    y_pred=model.predict(X_test) #make prediction on test set\n    error = sqrt(mean_squared_error(Y_test,y_pred)) #calculate rmse\n    rmse_val.append(error) #store rmse values\n    print('RMSE value for k= ' , K , 'is:', error)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "#plotting the rmse values against k values -\nplt.figure(figsize = (8,6))\nplt.plot(range(10), rmse_val, color='blue', linestyle='dashed', marker='o', markerfacecolor='green', markersize=10)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "rf = RandomForestRegressor(n_estimators = 250 ,max_depth=6)\nsvr=SVR(C=1.0, epsilon=0.2, kernel='poly', gamma='auto')\ndtc = DecisionTreeRegressor(criterion='mse')\nadb=AdaBoostRegressor(learning_rate=0.1)\ngradb=GradientBoostingRegressor( max_depth=6,learning_rate=0.1)\nknn=KNeighborsRegressor(n_neighbors=4,algorithm='kd_tree')\nls= Lasso(alpha=1e-2, normalize=True, max_iter=1e5)\nrd=Ridge(alpha=1e-2, normalize=True)\nmodel = [rf,ls,rd,svr,dtc,adb,gradb,knn,xgb]\n\nfor m in model:\n    m.fit(X_train,Y_train)\n    m.score(X_train,Y_train)\n    y_pred = m.predict(X_test)\n    print('\\n')                                        \n    print('\\033[1m'+' Error of ', m, ':' +'\\033[0m')\n    print('Mean absolute error :', mean_absolute_error(Y_test,y_pred))\n    print('Mean squared error :', mean_squared_error(Y_test,y_pred))\n    print('Root Mean Squared Error:', np.sqrt(mean_squared_error(Y_test,y_pred)))\n    print('\\n')\n\n    print('\\033[1m'+' R2 Score :'+'\\033[0m')\n    print(r2_score(Y_test,y_pred)) \n    \n    # Cross Validation\n    score = cross_val_score(m, principle_x, Y, cv =4)\n    print('\\n')\n    print('\\033[1m'+'Cross Validation Score :',m,\":\"+'\\033[0m\\n')\n    print(\"Mean CV Score :\",score.mean())\n    print('==============================================================================================================')",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "model = [rf,ls,rd,svr,dtc,adb,gradb,knn]\n\nfor m in model:\n    plt.figure(figsize=(7,5))\n    m.fit(X_train,Y_train)\n    y_pred=m.predict(X_test)\n    print('\\n')\n    print('\\033[1m'+' True Values Vs Predicted Value plot', m, ':' +'\\033[0m')\n    sns.scatterplot(Y_test.round(2), y_pred)\n    plt.xlabel('True Values' , fontsize=15)\n    plt.ylabel('Predictions', fontsize=15)\n    plt.tight_layout()\n    plt.show()\n    print('\\n')\n    print('===================================================================================================')",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "from sklearn.model_selection import GridSearchCV",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "parameter = {'alpha':np.array([1,0.5,0.1,0.01,0.001,0.0001]),\n             'fit_intercept': [True,False],'normalize':[True,False],\n             'max_iter':[250,500,1000,1500],'random_state':np.arange(100),\n             'selection':[\"cyclic\",\"random\"]}",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "GCV = GridSearchCV(Lasso(),parameter,cv=5,n_jobs = -1,verbose = 3)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "GCV.fit(X_train,Y_train)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "GCV.best_params_",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "Final_mod = Lasso(alpha = 0.5, fit_intercept= True, normalize = False,\n                                           max_iter = 250, random_state = 32,selection ='random')\nFinal_mod.fit(X_train,Y_train)\ny_pred=Final_mod.predict(X_test)\nprint('\\n')                                        \nprint('\\033[1m'+' Error in Final Model :' +'\\033[0m')\nprint('Mean absolute error :', mean_absolute_error(Y_test,y_pred))\nprint('Mean squared error :', mean_squared_error(Y_test,y_pred))\nprint('Root Mean Squared Error:', np.sqrt(mean_squared_error(Y_test,y_pred)))\nprint('\\n')\nprint('\\033[1m'+' R2 Score of Final Model :'+'\\033[0m')\nprint(r2_score(Y_test,y_pred)) \nprint('\\n')",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "plt.figure(figsize=(6,5))\ny_pred=Final_mod.predict(X_test)\nsns.swarmplot(Y_test.round(2), y_pred)\nprint('\\033[1m'+' True Values Vs Predicted Value plot :' +'\\033[0m')\nplt.xlabel('True Values' , fontsize=15)\nplt.ylabel('Predictions', fontsize=15)\nplt.tight_layout()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "#saving model",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "import joblib\njoblib.dump(Final_mod,'Baseball_Final.pkl')",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    }
+  ]
+}

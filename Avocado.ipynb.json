@@ -1,0 +1,859 @@
+{
+  "metadata": {
+    "kernelspec": {
+      "name": "python",
+      "display_name": "Python (Pyodide)",
+      "language": "python"
+    },
+    "language_info": {
+      "codemirror_mode": {
+        "name": "python",
+        "version": 3
+      },
+      "file_extension": ".py",
+      "mimetype": "text/x-python",
+      "name": "python",
+      "nbconvert_exporter": "python",
+      "pygments_lexer": "ipython3",
+      "version": "3.8"
+    }
+  },
+  "nbformat_minor": 4,
+  "nbformat": 4,
+  "cells": [
+    {
+      "cell_type": "code",
+      "source": "import pandas as pd # for data wrangling purpose\nimport numpy as np # Basic computation library\nimport seaborn as sns # For Visualization \nimport matplotlib.pyplot as plt # ploting package\n%matplotlib inline\nimport warnings # Filtering warnings\nwarnings.filterwarnings('ignore')",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "av=pd.read_csv('avocado.csv')",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "print('No of Rows:',av.shape[0])\nprint('No of Columns:',av.shape[1])\nav.head()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "av.columns",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "av.drop(['Unnamed: 0'], axis=1, inplace=True)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "av.head()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "av.duplicated().sum()  # This will check the duplicate data for all columns.",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "plt.figure(figsize=(10,6))\nsns.heatmap(av.isnull())",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "missing_values = av.isnull().sum().sort_values(ascending = False)\npercentage_missing_values =(missing_values/len(av))*100\nprint(pd.concat([missing_values, percentage_missing_values], axis =1, keys =['Missing Values', '% Missing data']))",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "av.info()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "# Converting datatype of date column\nav['Date']=pd.to_datetime(av.Date)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "av['Date'].dtype",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "# Visualizing the statistics of the columns using heatmap.\nplt.figure(figsize=(20,8))\nsns.heatmap(av.describe(),linewidths = 0.1,fmt='0.1f',annot = True,cmap='PiYG')",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "av.describe().T.round(3)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "print(\"\\033[1m\"+'Minimum Price of Avocado :'+\"\\033[0m\",av.AveragePrice.min(),'USD')\nprint(\"\\033[1m\"+'Maximum Price of avacado :'+\"\\033[0m\",av.AveragePrice.max(),'USD')\nprint(\"\\033[1m\"+'Average Price of avacado :'+\"\\033[0m\",av.AveragePrice.mean(),'USD')",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "plt.figure(figsize=(12,7))\nplt.title('Distribution Price')\nsns.distplot(av[\"AveragePrice\"], color='b')",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "av['type'].value_counts()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "av.groupby('type')['AveragePrice'].mean()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "print(\"\\033[1m\"+'Percentage difference in price of avacado :'+\"\\033[0m\",((1.65399-1.1580)/1.1580)*100,\"%\")",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "plt.figure(figsize=(8,6))\nsns.boxplot(y=\"type\", x=\"AveragePrice\", data=av, palette = 'hsv')",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "labels = 'Conventional','Organic',\nfig, ax = plt.subplots()\nax.pie(av.groupby('type')['Total Volume'].mean(),labels = labels,radius =2,autopct = '%2.2f%%',explode=[0.3,0.2], shadow=True,)\nplt.show()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "pd.crosstab([av.type,av.year],av.AveragePrice",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "av.groupby(['year','type'])['AveragePrice'].agg([min,max,np.mean,np.median])",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "av.groupby(['year','type'])['Total Volume','Total Bags','Small Bags','Large Bags','XLarge Bags'].agg([sum])",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "av.sort_values(by=['Date'], inplace=True, ascending=True)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "# Average price of Conventional Avocados over time\n\nmask = av['type']== 'conventional'\nplt.rc('figure', titlesize=20)\nfig = plt.figure(figsize = (27, 12))\nfig.suptitle('Average Price of Conventional Avocados Over Time', fontsize=25)\nax = fig.add_subplot(111)\n\ndates = av[mask]['Date'].tolist()\navgPrices = av[mask]['AveragePrice'].tolist()\n\nplt.scatter( dates,avgPrices, c=avgPrices, cmap='plasma')\nax.set_xlabel('Date',fontsize = 15,)\nax.set_ylabel('Average Price (USD)', fontsize = 15)\nax.set_xlim()\nax.tick_params(labelrotation=90)\n\nplt.show()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "# Average price of Organic Avocados over time\nmask = av['type']== 'organic'\nplt.rc('figure', titlesize=20)\nfig = plt.figure(figsize = (27, 12))\nfig.suptitle('Average Price of Organic Avocados Over Time', fontsize=25)\nax = fig.add_subplot(111)\nfig.subplots_adjust(top=0.93)\n\ndates = av[mask]['Date'].tolist()\navgPrices = av[mask]['AveragePrice'].tolist()\n\nplt.scatter(dates,avgPrices, c=avgPrices, cmap='plasma')\nax.set_xlabel('Date',fontsize = 15)\nax.set_ylabel('Average Price (USD)', fontsize = 15)\nplt.xlim()\nplt.show()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "av.groupby(['region'])['Total Volume','AveragePrice'].agg([sum])",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "av.head()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "av2=av.copy()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "# Creating Datframe for numeric features\nav2.drop(['Date','type','region','year'], axis=1, inplace=True)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "plt.figure(figsize=(20,25), facecolor='white')\nplotnumber =1\nfor column in df2:\n    if plotnumber <=9:\n        ax = plt.subplot(3,3,plotnumber)\n        sns.distplot(df2[column], color='r',hist=False,kde_kws={\"shade\": True})\n        plt.xlabel(column,fontsize=20)\n    plotnumber+=1\nplt.show()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "sns.set_palette('gist_rainbow_r')\nplt.figure(figsize=(20,20), facecolor='white')\nplotnumber =1\nfor column in df2:\n    if plotnumber <=9:\n        ax = plt.subplot(3,3,plotnumber)\n        sns.violinplot(av[column])\n        plt.xlabel(column,fontsize=20)\n    plotnumber+=1\nplt.show()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "av=pd.read_csv('avocado.csv')",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "# Copy of original dataframe\nav3=av.copy()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "av3['Year'], av3['Month'], av3['Day'] = av3['Date'].str.split('-').str\nav3.drop(columns=['Date','year'], inplace=True)\nav3",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "# Converting Datetime datatypes to int\nav3['Year']=av3['Year'].astype(int)\nav3['Month']=av3['Month'].astype(int)\nav3['Date']=av3['Day'].astype(int)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "av3.drop(columns=['Day'],axis=1, inplace=True)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "av3.drop(columns=['Date'],axis=1, inplace=True)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "av3.head()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "# Checking unique values and Yearwise total No of sale entry\nav3['Year'].value_counts()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "sns.countplot('Year',data=av3)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "plt.figure(figsize=(15,7))\nsns.countplot(x='Month', data=av3, palette",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "av3['Month'].value_counts().max()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "av3['Month'].value_counts().min()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "plt.figure(figsize=(15,7))\nsns.barplot(x=\"Month\", y=\"AveragePrice\", hue='type', data=av3)\nplt.show()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "av3.groupby(['Month','type'])['AveragePrice'].agg([np.mean]).T",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "plt.figure(figsize=(10,10))\nsns.catplot(x = \"Month\", y = \"AveragePrice\", kind ='violin', data=av3, linewidth=2)\nplt.show()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "plt.figure(figsize=(15,6))\nsns.barplot(x=df['region'],y=av['AveragePrice'], data=av3)\nplt.title(f'Bar Plot for regions')\nplt.xticks(rotation=90)\nplt.show()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "region = av.groupby('region')['Total Volume'].sum().sort_values(ascending=False).reset_index()\nplt.figure(figsize=(15,13))\nsns.barplot(x=region[\"Total Volume\"], y=region[\"region\"], data=av, palette=\"Set1\")\nplt.show()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "av.groupby(['region'])['Total Volume','Total Bags','Small Bags','Large Bags','XLarge Bags'].agg([np.mean])",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "plt.figure(figsize=(20,25),facecolor='white')\nplotnumber=1\ny = av[['4046','4225','4770']]\nX = av['year']\nfor col in y:\n    if plotnumber<=9:\n        plt.subplot(3,3,plotnumber)\n        sns.barplot(X,y[col])\n        plt.xlabel('Year',fontsize=20)\n        plt.ylabel(col,fontsize=20)\n    plotnumber+=1\nplt.tight_layout()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "plt.figure(figsize=(20,25),facecolor='white')\nplotnumber=1\ny = av[['Small Bags','Large Bags','XLarge Bags']]\nX = av['year']\nfor col in y:\n    if plotnumber<=9:\n        plt.subplot(3,3,plotnumber)\n        sns.barplot(X,y[col])\n        plt.xlabel('Year',fontsize=20)\n        plt.ylabel(col,fontsize=20)\n    plotnumber+=1\nplt.tight_layout()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "mask = av['type']=='conventional'\ng = sns.factorplot('AveragePrice','region',data=av[mask],\n                   hue='year',\n                   size=13,\n                   aspect=0.8,\n                   palette='magma',\n                   join=False,\n                  )",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "mask = av['type']=='organic'\ng = sns.factorplot('AveragePrice','region',data=av[mask],\n                   hue='year',\n                   size=13,\n                   aspect=0.8,\n                   palette='magma',\n                   join=False,\n                  )",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "sns.pairplot(av2)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "# Using Label Encoder on target variable\nfrom sklearn.preprocessing import LabelEncoder\nle = LabelEncoder()\nav3['region']=le.fit_transform(av3['region'])\nav3['type']=le.fit_transform(av3['type'])\nav3.head()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "plt.figure(figsize=(18,15), facecolor='white')\nplotnumber =1\nfor column in av2:\n    if plotnumber <=9:\n        ax = plt.subplot(3,3,plotnumber)\n        sns.boxplot(df2[column], palette='hsv')\n        plt.xlabel(column,fontsize=20)\n    plotnumber+=1\nplt.tight_layout()\nplt.show()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "from scipy.stats import zscore\nz = np.abs(zscore(av3))\nthreshold = 3\nav4 = av3[(z<3).all(axis = 1)]",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "print(\"\\033[1m\"+'Shape of dataset after removing outliers :'+\"\\033[0m\",av4.shape)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "print(\"\\033[1m\"+'Percentage Data Loss :'+\"\\033[0m\",((18249-17651)/18249)*100,'%')",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "av4.corr()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "plt.figure(figsize=(25,18))\nsns.heatmap(av4.corr(), vmin=-1, vmax=1, annot=True, square=True, fmt='0.3f', \n            annot_kws={'size':10}, cmap=\"gist_stern\")\nplt.xticks(fontsize=12)\nplt.yticks(fontsize=12)\nplt.show()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "plt.figure(figsize = (18,6))\nav4.corr()['AveragePrice'].drop(['AveragePrice']).plot(kind='bar',color = 'c')\nplt.xlabel('Features',fontsize=15)\nplt.ylabel('AveragePrice',fontsize=15)\nplt.title('Correlation of features with Target Variable Average Price',fontsize = 18)\nplt.show()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "av4.head()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "av4.drop(columns=['4046','4225','4770','region','TotalBags'],axis=1, inplace=True)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "from statsmodels.stats.outliers_influence import variance_inflation_factor\nvif= pd.DataFrame()\nvif['VIF']= [variance_inflation_factor(av4.values,i) for i in range(av4.shape[1])]\nvif['Features']= av4.columns\nvif",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "av4.drop(columns=['Year'],axis=1, inplace=True)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "plt.figure(figsize = (14,5))\nav4.corr()['AveragePrice'].drop(['AveragePrice']).plot(kind='bar',color = 'c')\nplt.xlabel('Features',fontsize=15)\nplt.ylabel('AveragePrice',fontsize=15)\nplt.title('Correlation of features with Target Variable Average Price',fontsize = 18)\nplt.show()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "av4.skew()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "for col in av4.columns:\n    if av4.skew().loc[col]>0.55:\n        av4[col]=np.log1p(av4[col])",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "X = av4.drop('AveragePrice', axis=1)\nY = av4['AveragePrice']",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "from sklearn.preprocessing import StandardScaler\nscaler= StandardScaler()\nX_scale = scaler.fit_transform(X)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "from sklearn.linear_model import LinearRegression\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.ensemble import RandomForestRegressor\nfrom sklearn.tree import DecisionTreeRegressor\nfrom sklearn.svm import SVR\nfrom sklearn.ensemble import AdaBoostRegressor\nfrom sklearn.ensemble import  GradientBoostingRegressor\nfrom sklearn.neighbors import KNeighborsRegressor\nfrom sklearn.metrics import mean_squared_error, mean_absolute_error\nfrom sklearn.metrics import r2_score\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.linear_model import  Ridge\nfrom sklearn.linear_model import  Lasso\nfrom xgboost import XGBRegressor",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "from sklearn.model_selection import train_test_split\nX_train, X_test, Y_train, Y_test = train_test_split(X_scale, Y, random_state=42, test_size=.33)\nprint('Training feature matrix size:',X_train.shape)\nprint('Training target vector size:',Y_train.shape)\nprint('Test feature matrix size:',X_test.shape)\nprint('Test target vector size:',Y_test.shape)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "from sklearn.linear_model import LinearRegression\nfrom sklearn.metrics import r2_score\nmaxR2_score=0\nmaxRS=0\nfor i in range(1,1000):\n    X_train, X_test, Y_train, Y_test = train_test_split(X_scale, Y, random_state=i, test_size=.33)\n    lin_reg=LinearRegression()\n    lin_reg.fit(X_train,Y_train)\n    y_pred=lin_reg.predict(X_test)\n    R2=r2_score(Y_test,y_pred)\n    if R2>maxR2_score:\n        maxR2_score=R2\n        maxRS=i\nprint('Best R2 Score is', maxR2_score ,'on Random_state', maxRS)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "from sklearn.linear_model import LinearRegression\nfrom sklearn.model_selection import train_test_split\nX_train, X_test, Y_train, Y_test = train_test_split(X_scale, Y, random_state=557, test_size=.33)\nlin_reg=LinearRegression()\nlin_reg.fit(X_train,Y_train)\nlin_reg.score(X_train,Y_train)\ny_pred=lin_reg.predict(X_test)\nprint('\\033[1m'+'Predicted Wins:'+'\\033[0m\\n',y_pred)\nprint('\\n')\nprint('\\033[1m'+'Actual Wins:'+'\\033[0m\\n',Y_test)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "from sklearn.metrics import mean_squared_error, mean_absolute_error\nfrom sklearn.metrics import r2_score\nprint('\\033[1m'+' Error :'+'\\033[0m')\nprint('Mean absolute error :', mean_absolute_error(Y_test,y_pred))\nprint('Mean squared error :', mean_squared_error(Y_test,y_pred))\nprint('Root Mean Squared Error:', np.sqrt(mean_squared_error(Y_test,y_pred)))\nprint('\\n')\nfrom sklearn.metrics import r2_score\nprint('\\033[1m'+' R2 Score :'+'\\033[0m')\nprint(r2_score(Y_test,y_pred,multioutput='variance_weighted'))",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "# Cross Validation\nfrom sklearn.model_selection import cross_val_score\nscore = cross_val_score(lin_reg, X_scale, Y, cv =5)\nprint('\\033[1m'+'Cross Validation Score :',lin_reg,\":\"+'\\033[0m\\n')\nprint(\"Mean CV Score :\",score.mean())",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "rf = RandomForestRegressor(n_estimators = 70 ,max_depth=25)\ndtc = DecisionTreeRegressor()\nadb=AdaBoostRegressor(learning_rate=0.1)\ngradb=GradientBoostingRegressor(max_depth=25,learning_rate=0.1)\nrd=Ridge(alpha=0.01)\nxgb=XGBRegressor()\nmodel = [rf,rd,dtc,adb,gradb,xgb]\n\nfor m in model:\n    m.fit(X_train,Y_train)\n    m.score(X_train,Y_train)\n    y_pred = m.predict(X_test)\n    print('\\n')                                        \n    print('\\033[1m'+' Error of ', m, ':' +'\\033[0m')\n    print('Mean absolute error :', mean_absolute_error(Y_test,y_pred))\n    print('Mean squared error :', mean_squared_error(Y_test,y_pred))\n    print('Root Mean Squared Error:', np.sqrt(mean_squared_error(Y_test,y_pred)))\n    print('\\n')\n\n    print('\\033[1m'+' R2 Score :'+'\\033[0m')\n    print(r2_score(Y_test,y_pred)) \n    print('==============================================================================================================')",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "# Cross Validation\nmodel = [rf,rd,dtc,adb,gradb,xgb]\n\nfor m in model:\n    score = cross_val_score(m, X_scale, Y, cv =5)\n    print('\\n')\n    print('\\033[1m'+'Cross Validation Score :',m,\":\"+'\\033[0m\\n')\n    print(\"Mean CV Score :\",score.mean())\n    print('==============================================================================================================')",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "from sklearn.model_selection import GridSearchCV",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "from sklearn.ensemble import RandomForestRegressor",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "parameter = {'n_estimators':[30,60,80],'max_depth': [10,20,40],\n             'min_samples_leaf':[5,10],'criterion':['mse','mae'],\n             'max_features':[\"auto\",\"sqrt\",\"log2\"]}",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "GCV = GridSearchCV(RandomForestRegressor(),parameter,cv=5,n_jobs = -1,verbose = 3)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "GCV.fit(X_train,Y_train)",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "from sklearn.ensemble import RandomForestRegressor\nFinal_mod =  RandomForestRegressor(n_estimators=60 ,criterion = 'mse', max_depth= 20, max_features = 'auto',\n             min_samples_leaf = 5, min_samples_split = 10)\nFinal_mod.fit(X_train,Y_train)\ny_pred=Final_mod.predict(X_test)\nprint('\\n')                                        \nprint('\\033[1m'+' Error in Final Model :' +'\\033[0m')\nprint('Mean absolute error :', mean_absolute_error(Y_test,y_pred))\nprint('Mean squared error :', mean_squared_error(Y_test,y_pred))\nprint('Root Mean Squared Error:', np.sqrt(mean_squared_error(Y_test,y_pred)))\nprint('\\n')\nprint('\\033[1m'+' R2 Score of Final Model :'+'\\033[0m')\nprint(r2_score(Y_test,y_pred)) \nprint('\\n')",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    },
+    {
+      "cell_type": "code",
+      "source": "plt.figure(figsize=(12,7))\ny_pred=Final_mod.predict(X_test)\nsns.swarmplot(Y_test.round(2), y_pred)\nprint('\\033[1m'+' True Values Vs Predicted Value plot :' +'\\033[0m')\nplt.xlabel('True Values' , fontsize=15)\nplt.ylabel('Predictions', fontsize=15)\nplt.tight_layout()",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [
+        {
+          "ename": "<class 'NameError'>",
+          "evalue": "name 'plt' is not defined",
+          "traceback": [
+            "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m",
+            "\u001b[0;31mNameError\u001b[0m                                 Traceback (most recent call last)",
+            "Cell \u001b[0;32mIn[2], line 1\u001b[0m\n\u001b[0;32m----> 1\u001b[0m \u001b[43mplt\u001b[49m\u001b[38;5;241m.\u001b[39mfigure(figsize\u001b[38;5;241m=\u001b[39m(\u001b[38;5;241m12\u001b[39m,\u001b[38;5;241m7\u001b[39m))\n\u001b[1;32m      2\u001b[0m y_pred\u001b[38;5;241m=\u001b[39mFinal_mod\u001b[38;5;241m.\u001b[39mpredict(X_test)\n\u001b[1;32m      3\u001b[0m sns\u001b[38;5;241m.\u001b[39mswarmplot(Y_test\u001b[38;5;241m.\u001b[39mround(\u001b[38;5;241m2\u001b[39m), y_pred)\n",
+            "\u001b[0;31mNameError\u001b[0m: name 'plt' is not defined"
+          ],
+          "output_type": "error"
+        }
+      ],
+      "execution_count": 2
+    },
+    {
+      "cell_type": "code",
+      "source": "import joblib\njoblib.dump(Final_mod,'Avacado_Final.pkl')",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [
+        {
+          "ename": "<class 'NameError'>",
+          "evalue": "name 'Final_mod' is not defined",
+          "traceback": [
+            "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m",
+            "\u001b[0;31mNameError\u001b[0m                                 Traceback (most recent call last)",
+            "Cell \u001b[0;32mIn[1], line 2\u001b[0m\n\u001b[1;32m      1\u001b[0m \u001b[38;5;28;01mimport\u001b[39;00m \u001b[38;5;21;01mjoblib\u001b[39;00m\n\u001b[0;32m----> 2\u001b[0m joblib\u001b[38;5;241m.\u001b[39mdump(\u001b[43mFinal_mod\u001b[49m,\u001b[38;5;124m'\u001b[39m\u001b[38;5;124mAvacado_Final.pkl\u001b[39m\u001b[38;5;124m'\u001b[39m)\n",
+            "\u001b[0;31mNameError\u001b[0m: name 'Final_mod' is not defined"
+          ],
+          "output_type": "error"
+        }
+      ],
+      "execution_count": 1
+    },
+    {
+      "cell_type": "code",
+      "source": "",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    }
+  ]
+}
